@@ -140,9 +140,10 @@ class Speaker(ndb.Model):
 class Session(ndb.Model):
 
     """Session  -- Session object"""
+    websafeConferenceKey = ndb.StringProperty()
     name = ndb.StringProperty()
     highlights = ndb.StringProperty()
-    speaker = ndb.KeyProperty(kind=Speaker)
+    speaker_key = ndb.StringProperty()
     duration = ndb.IntegerProperty()
     typeOfSession = ndb.StringProperty(repeated=True)
     date = ndb.DateProperty()
@@ -166,14 +167,15 @@ class SpeakerForms(messages.Message):
 class SessionForm(messages.Message):
 
     """Sessionform -- Session outbound form message """
-    name = messages.StringField(1)
-    highlights = messages.StringField(2)
-    speaker = messages.MessageField(SpeakerForm, 3)
-    duration = messages.IntegerField(4)
-    typeOfSession = messages.StringField(5, repeated=True)
-    date = messages.StringField(6)
-    start_time = messages.StringField(7)
-    websafeKey = messages.StringField(8)
+    websafeConferenceKey = messages.StringField(1)
+    name = messages.StringField(2)
+    highlights = messages.StringField(3)
+    speaker_key = messages.StringField(4)
+    duration = messages.IntegerField(5)
+    typeOfSession = messages.StringField(6, repeated=True)
+    date = messages.StringField(7)
+    start_time = messages.StringField(8)
+    websafeKey = messages.StringField(9)
 
 
 class SessionForms(messages.Message):
