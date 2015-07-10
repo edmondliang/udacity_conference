@@ -118,8 +118,14 @@ SESSION_GET_BY_CONF_TYPE_REQUEST = endpoints.ResourceContainer(
     typeOfSession=messages.StringField(2),
 )
 
+SESSION_GET_BY_NOT_LIKE_REQUEST = endpoints.ResourceContainer(
+    message_types.VoidMessage,
+    typeOfSession=messages.StringField(1),
+    startTime=messages.StringField(2),
+)
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 
 def login_required(f):
     @wraps(f)
@@ -676,8 +682,9 @@ class ConferenceApi(remote.Service):
         form = SessionForm()
         for field in form.all_fields():
             if hasattr(session, field.name):
-                if field.name in ['start_time','date']:
-                    setattr(form, field.name, str(getattr(session, field.name)))
+                if field.name in ['start_time', 'date']:
+                    setattr(
+                        form, field.name, str(getattr(session, field.name)))
                 else:
                     setattr(form, field.name, getattr(session, field.name))
             elif field.name == "websafeKey":
@@ -824,6 +831,7 @@ class ConferenceApi(remote.Service):
             items=[self._copySessionToForm(item) for item in sessions]
         )
 # - - - Wishlist - - - - - - - - - - - - - - - - - - - -
+
     @endpoints.method(SESSION_GET_REQUEST, BooleanMessage,
                       path='wishlist/add',
                       http_method='POST', name='addSessionToWishlist')
@@ -860,9 +868,24 @@ class ConferenceApi(remote.Service):
 
         # return sessionFroms
         return SessionForms(
-            items=[self._copySessionToForm(ndb.Key(urlsafe=item).get()) for item in prof.sessionKeyToWishlist]
+            items=[self._copySessionToForm(
+                ndb.Key(urlsafe=item).get()) for item in prof.sessionKeyToWishlist]
         )
 
+# - - - Additional Queries - - - - - - - - - - - - - - - - - - - -
+    @endpoints.method(SESSION_GET_BY_NOT_LIKE_REQUEST, SessionForms,
+                      path='conference/session/get_by_not_like',
+                      http_method='POST', name='getSessionsByNotLike')
+    def getSessionsByNotLike(self, request):
+        """Get Sessions by not like """
 
+        sessions = Session.query(
+            Session.typeOfSession != request.typeOfSession).fetch()
+
+        # return individual ConferenceForm object per Conference
+        return SessionForms(
+            items=[self._copySessionToForm(item) for item in sessions if datetime.strptime(
+                request.startTime, "%H:%M").time() > item.start_time]
+        )
 
 api = endpoints.api_server([ConferenceApi])  # register API
