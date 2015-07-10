@@ -9,6 +9,7 @@ conference.py -- Udacity conference server-side Python App Engine API;
 
 from datetime import datetime
 from functools import wraps
+import json
 from pprint import pprint
 
 import endpoints
@@ -50,6 +51,7 @@ from utils import getUserId
 EMAIL_SCOPE = endpoints.EMAIL_SCOPE
 API_EXPLORER_CLIENT_ID = endpoints.API_EXPLORER_CLIENT_ID
 MEMCACHE_ANNOUNCEMENTS_KEY = "RECENT_ANNOUNCEMENTS"
+MEMCACHE_FEATURED_SPEAKERS = "FEATURED_SPEAKERS"
 ANNOUNCEMENT_TPL = ('Last chance to attend! The following conferences '
                     'are nearly sold out: %s')
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -724,6 +726,8 @@ class ConferenceApi(remote.Service):
         data['key'] = s_key
         # create Session
         session = Session(**data).put()
+        # update featured speaker
+        self._getFeaturedSpeaker()
         return request
 
     @login_required
@@ -878,7 +882,7 @@ class ConferenceApi(remote.Service):
                       http_method='POST', name='getSessionsByNotLike')
     def getSessionsByNotLike(self, request):
         """Get Sessions by not like """
-        start_time=datetime.strptime(request.startTime, "%H:%M").time()
+        start_time = datetime.strptime(request.startTime, "%H:%M").time()
         type_result = Session.query(projection=[Session.typeOfSession], distinct=True).filter(
             Session.typeOfSession != request.typeOfSession).fetch()
         type_list = [item.typeOfSession for item in type_result]
@@ -889,5 +893,41 @@ class ConferenceApi(remote.Service):
         return SessionForms(
             items=[self._copySessionToForm(item) for item in sessions]
         )
+# - - - memcache feature speaker - - - - - - - - - - - - - - - - - - - -
+
+    def _getFeaturedSpeaker(self):
+        conferences = Conference.query().fetch()
+        speaker_dict = {}
+        featuredSpeaker = []
+        for conf in conferences:
+            session_name = {}
+            sessions = Session.query(ancestor=conf.key).fetch()
+            for session in sessions:
+                if not speaker_dict.get(session.speaker_key):
+                    speaker_dict[session.speaker_key] = []
+                speaker_dict[session.speaker_key].append(session.name)
+
+        for key in speaker_dict:
+            if len(speaker_dict[key]) == 1:
+                del speaker_dict[key]
+
+        for key in speaker_dict:
+            speaker = ndb.Key(urlsafe=key).get()
+            featuredSpeaker.append(
+                {'speaker_name': speaker.name, 'sessions': speaker_dict[key]})
+        pprint(featuredSpeaker)
+        memcache.set(MEMCACHE_FEATURED_SPEAKERS, featuredSpeaker)
+        return featuredSpeaker
+
+    @endpoints.method(message_types.VoidMessage, StringMessage,
+                      path='speaker/get_features',
+                      http_method='POST', name='getFeaturedSpeaker')
+    def getFeaturedSpeaker(self, request):
+        """Get  by not like """
+        featuredSpeaker = memcache.get(MEMCACHE_FEATURED_SPEAKERS)
+        if not featuredSpeaker:
+            featuredSpeaker = self._getFeaturedSpeaker()
+        # return SessionsForms object
+        return StringMessage(data=json.dumps(featuredSpeaker))
 
 api = endpoints.api_server([ConferenceApi])  # register API
