@@ -10,6 +10,7 @@ conference.py -- Udacity conference server-side Python App Engine API;
 from datetime import datetime
 from functools import wraps
 from operator import itemgetter, attrgetter
+import itertools
 import json
 from pprint import pprint
 
@@ -897,7 +898,7 @@ class ConferenceApi(remote.Service):
 
     @endpoints.method(message_types.VoidMessage, SessionForms,
                       path='conference/session/get_coming',
-                      http_method='POST', name='getComingSessions')
+                      http_method='GET', name='getComingSessions')
     def getComingSessions(self, request):
         """Get Sessions by not like """
         start_time = datetime.now()
@@ -912,13 +913,15 @@ class ConferenceApi(remote.Service):
 
     @endpoints.method(message_types.VoidMessage, SpeakerForms,
                       path='speaker/get_active',
-                      http_method='POST', name='getActiveSpeakers')
+                      http_method='GET', name='getActiveSpeakers')
     def getActiveSpeakers(self, request):
         """Get Sessions by not like """
-        speakers_list=self._getFeaturedSpeaker()
-        speakers_sort=sorted(speakers_list,key=itemgetter('session_count'),reverse=True)
-        speakers_sort=speakers_sort[:10]
-        Speakers=[ndb.Key(urlsafe=item['sepaker_urlsafekey']).get() for item in speakers_sort]
+        speakers_list = self._getFeaturedSpeaker()
+        speakers_sort = sorted(
+            speakers_list, key=itemgetter('session_count'), reverse=True)
+        speakers_sort = speakers_sort[:10]
+        Speakers = [ndb.Key(urlsafe=item['sepaker_urlsafekey']).get()
+                    for item in speakers_sort]
         return SpeakerForms(
             items=[self._copySpeakerToForm(item) for item in Speakers]
         )
@@ -947,12 +950,13 @@ class ConferenceApi(remote.Service):
 
     @endpoints.method(message_types.VoidMessage, StringMessage,
                       path='speaker/get_features',
-                      http_method='POST', name='getFeaturedSpeaker')
+                      http_method='GET', name='getFeaturedSpeaker')
     def getFeaturedSpeaker(self, request):
         """Get  by not like """
         featuredSpeaker = memcache.get(MEMCACHE_FEATURED_SPEAKERS)
         if not featuredSpeaker:
             featuredSpeaker = self._getFeaturedSpeaker()
+
         # return SessionsForms object
         return StringMessage(data=json.dumps(featuredSpeaker))
 

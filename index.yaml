@@ -97,5 +97,135 @@ indexes:
 
 - kind: Session
   properties:
+  - name: duration
+  - name: date
+
+- kind: Session
+  properties:
+  - name: duration
+  - name: name
+
+- kind: Session
+  properties:
+  - name: duration
+  - name: speaker_key
+
+- kind: Session
+  properties:
+  - name: duration
+  - name: start_time
+
+- kind: Session
+  properties:
+  - name: highlights
+  - name: date
+
+- kind: Session
+  properties:
+  - name: highlights
+  - name: duration
+
+- kind: Session
+  properties:
+  - name: highlights
+  - name: name
+
+- kind: Session
+  properties:
+  - name: highlights
+  - name: speaker_key
+
+- kind: Session
+  properties:
+  - name: highlights
+  - name: start_time
+
+- kind: Session
+  properties:
+  - name: name
+  - name: date
+
+- kind: Session
+  properties:
+  - name: speaker_key
+  - name: date
+
+- kind: Session
+  properties:
+  - name: speaker_key
+  - name: name
+
+- kind: Session
+  properties:
+  - name: speaker_key
+  - name: start_time
+
+- kind: Session
+  properties:
+  - name: start_time
+  - name: date
+
+- kind: Session
+  properties:
+  - name: start_time
+  - name: name
+
+- kind: Session
+  properties:
   - name: typeOfSession
+  - name: date
+
+- kind: Session
+  properties:
+  - name: typeOfSession
+  - name: duration
+
+- kind: Session
+  properties:
+  - name: typeOfSession
+  - name: highlights
+
+- kind: Session
+  properties:
+  - name: typeOfSession
+  - name: name
+
+- kind: Session
+  properties:
+  - name: typeOfSession
+  - name: speaker_key
+
+- kind: Session
+  properties:
+  - name: typeOfSession
+  - name: start_time
+
+- kind: Session
+  properties:
+  - name: websafeConferenceKey
+  - name: date
+
+- kind: Session
+  properties:
+  - name: websafeConferenceKey
+  - name: duration
+
+- kind: Session
+  properties:
+  - name: websafeConferenceKey
+  - name: highlights
+
+- kind: Session
+  properties:
+  - name: websafeConferenceKey
+  - name: name
+
+- kind: Session
+  properties:
+  - name: websafeConferenceKey
+  - name: speaker_key
+
+- kind: Session
+  properties:
+  - name: websafeConferenceKey
   - name: start_time
