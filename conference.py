@@ -878,14 +878,16 @@ class ConferenceApi(remote.Service):
                       http_method='POST', name='getSessionsByNotLike')
     def getSessionsByNotLike(self, request):
         """Get Sessions by not like """
-
-        sessions = Session.query(
+        start_time=datetime.strptime(request.startTime, "%H:%M").time()
+        type_result = Session.query(projection=[Session.typeOfSession], distinct=True).filter(
             Session.typeOfSession != request.typeOfSession).fetch()
+        type_list = [item.typeOfSession for item in type_result]
+        sessions = Session.query(
+            Session.typeOfSession.IN(type_list)).filter(Session.start_time <= start_time).fetch()
 
-        # return individual ConferenceForm object per Conference
+        # return SessionsForms object
         return SessionForms(
-            items=[self._copySessionToForm(item) for item in sessions if datetime.strptime(
-                request.startTime, "%H:%M").time() > item.start_time]
+            items=[self._copySessionToForm(item) for item in sessions]
         )
 
 api = endpoints.api_server([ConferenceApi])  # register API
