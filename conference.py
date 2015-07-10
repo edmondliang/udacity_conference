@@ -837,7 +837,12 @@ class ConferenceApi(remote.Service):
             raise endpoints.NotFoundException(
                 'No session found with key: %s' % request.SessionKey)
 
+        result = False
         try:
+            if request.SessionKey in prof.sessionKeyToWishlist:
+                raise ConflictException(
+                    "You already have this in your Wishlist"
+                )
             prof.sessionKeyToWishlist.append(request.SessionKey)
             prof.put()
             result = True
