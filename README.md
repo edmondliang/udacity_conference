@@ -44,6 +44,8 @@ App Engine application for the Udacity training course.
 - https://cloud.google.com/appengine/docs
 - https://cloud.google.com/appengine/docs/python/ndb/
 - https://cloud.google.com/appengine/docs/python/endpoints/
+- https://cloud.google.com/appengine/docs/python/memcache/
+- http://stackoverflow.com/questions/72899/how-do-i-sort-a-list-of-dictionaries-by-values-of-the-dictionary-in-python
 
 
 [1]: https://developers.google.com/appengine
