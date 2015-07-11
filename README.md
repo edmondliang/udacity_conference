@@ -23,6 +23,28 @@ App Engine application for the Udacity training course.
 1. (Optional) Generate your client library(ies) with [the endpoints tool][6].
 1. Deploy your application.
 
+## Explanation of design choice in Speaker and Session
+- For Speaker, implement speaker entity for storing speaker, which makes easier to identify which person instead of using name in property.
+- For Session, implement session entity and ancestor key by conference key, which makes the conference as parent for making strong consistency queries.
+
+## Explanation of additional queries
+- getComingSessions()
+  It is for getting 10 coming sessions
+- getActiveSpeakers()
+  It is for getting top 10 speaker who speaks for more than 1 session
+
+## Explanation of getSessionsByNotLike()
+- Question: If the user does not like "workshops" and does not like to go sessions after 7pm, How would you handle like that?
+- Problems: For Google ndb, You can not perform more than one inequlity filter in one query.
+- Solution: Transform inequlity filter to equlity filter.
+  Transform typeOfSession != "workshops" to typeOfSession.IN(type_of_list_you_want_go)
+- Problem solved!
+
+## References
+- https://cloud.google.com/appengine/docs
+- https://cloud.google.com/appengine/docs/python/ndb/
+- https://cloud.google.com/appengine/docs/python/endpoints/
+
 
 [1]: https://developers.google.com/appengine
 [2]: http://python.org
