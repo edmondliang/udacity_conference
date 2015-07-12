@@ -290,7 +290,7 @@ class ConferenceApi(remote.Service):
 
     @endpoints.method(message_types.VoidMessage, ConferenceForms,
                       path='getConferencesCreated',
-                      http_method='POST', name='getConferencesCreated')
+                      http_method='GET', name='getConferencesCreated')
     @login_required
     def getConferencesCreated(self, request):
         """Return conferences created by user."""
@@ -792,7 +792,7 @@ class ConferenceApi(remote.Service):
 
     @endpoints.method(SESSION_GET_BY_CONF_REQUEST, SessionForms,
                       path='conference/session/get_by_conf/{websafeConferenceKey}',
-                      http_method='POST', name='getConferenceSessions')
+                      http_method='GET', name='getConferenceSessions')
     def getConferenceSessions(self, request):
         """Get Sessions by conference key"""
         c_key = ndb.Key(urlsafe=request.websafeConferenceKey)
@@ -808,7 +808,7 @@ class ConferenceApi(remote.Service):
 
     @endpoints.method(SESSION_GET_BY_CONF_TYPE_REQUEST, SessionForms,
                       path='conference/session/get_by_conf_and_type/{websafeConferenceKey}/{typeOfSession}',
-                      http_method='POST', name='getConferenceSessionsByType')
+                      http_method='GET', name='getConferenceSessionsByType')
     def getConferenceSessionsByType(self, request):
         """Get Sessions by conference key and typeOfSession"""
         c_key = ndb.Key(urlsafe=request.websafeConferenceKey)
@@ -827,7 +827,7 @@ class ConferenceApi(remote.Service):
 
     @endpoints.method(SPEAKER_GET_REQUEST, SessionForms,
                       path='conference/session/get_by_speaker/{websafeSpeakerKey}',
-                      http_method='POST', name='getSessionsBySpeaker')
+                      http_method='GET', name='getSessionsBySpeaker')
     def getSessionsBySpeaker(self, request):
         """Get Sessions by speaker key"""
         speaker_key = ndb.Key(urlsafe=request.websafeSpeakerKey)
@@ -887,8 +887,8 @@ class ConferenceApi(remote.Service):
 
 # - - - Additional Queries - - - - - - - - - - - - - - - - - - - -
     @endpoints.method(SESSION_GET_BY_NOT_LIKE_REQUEST, SessionForms,
-                      path='conference/session/get_by_not_like',
-                      http_method='POST', name='getSessionsByNotLike')
+                      path='conference/session/get_by_not_like/{typeOfSession}/{startTime}',
+                      http_method='GET', name='getSessionsByNotLike')
     def getSessionsByNotLike(self, request):
         """Get Sessions by not like typeOfSession and before startTime """
         #Get start time
