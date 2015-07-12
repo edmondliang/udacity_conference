@@ -137,6 +137,8 @@ class Speaker(ndb.Model):
     """Speaker  --Speaker object"""
     name = ndb.StringProperty()
     description = ndb.StringProperty()
+    sessions = ndb.StringProperty(repeated=True)
+    sessions_count = ndb.IntegerProperty()
 
 
 class Session(ndb.Model):
