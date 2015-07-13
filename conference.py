@@ -917,9 +917,8 @@ class ConferenceApi(remote.Service):
 
 # - - - Additional Queries - - - - - - - - - - - - - - - - - - - -
     @endpoints.method(SESSION_GET_BY_NOT_LIKE_REQUEST, SessionForms,
-                      path='conference/session/get_by_not_like/'
-                      + '{typeOfSession}/{startTime}',
-                      http_method='GET', name='getSessionsByNotLike')
+                      path='conference/session/get_by_not_like',
+                      http_method='POST', name='getSessionsByNotLike')
     def getSessionsByNotLike(self, request):
         """Get Sessions by not like typeOfSession and before startTime """
         # Get start time
