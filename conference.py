@@ -962,18 +962,13 @@ class ConferenceApi(remote.Service):
                       http_method='GET', name='getActiveSpeakers')
     def getActiveSpeakers(self, request):
         """Get Active Speakers"""
-        # Get all featured speakers
-        speakers_list = self._getFeaturedSpeaker()
-        # Sort speakers by how many session they speak
-        speakers_sort = sorted(
-            speakers_list, key=itemgetter('session_count'), reverse=True)
-        # Get top 10 speaker
-        speakers_sort = speakers_sort[:10]
-        Speakers = [ndb.Key(urlsafe=item['sepaker_urlsafekey']).get()
-                    for item in speakers_sort]
+        # Get top 10 featured speakers
+        speakers = Speaker.query(
+            Speaker.sessions_count > 1).order(-Speaker.sessions_count) \
+            .fetch(10)
         # Return SpeakerForms object
         return SpeakerForms(
-            items=[self._copySpeakerToForm(item) for item in Speakers]
+            items=[self._copySpeakerToForm(item) for item in speakers]
         )
 
 # - - - memcache feature speaker - - - - - - - - - - - - - - - - - - - -
